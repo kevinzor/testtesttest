@@ -1,0 +1,40 @@
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.example</groupId>
+	<artifactId>MarketCap</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<!-- Repositories: Spigot/Paper API and PlaceholderAPI -->
+	<repositories>
+		<repository>
+			<id>spigot-repo</id>
+			<!-- Spigot/Paper API snapshots are hosted here:contentReference[oaicite:0]{index=0} -->
+			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+		</repository>
+		<repository>
+			<id>placeholderapi</id>
+			<!-- PlaceholderAPI repository:contentReference[oaicite:1]{index=1} -->
+			<url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+		</repository>
+	</repositories>
+	<dependencies>
+		<!-- Paper/Spigot API (match your server version) -->
+		<dependency>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot-api</artifactId>
+			<version>1.21.8-R0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- PlaceholderAPI dependency:contentReference[oaicite:2]{index=2} -->
+		<dependency>
+			<groupId>me.clip</groupId>
+			<artifactId>placeholderapi</artifactId>
+			<version>2.11.5</version>
+			<!-- replace with the latest PAPI version -->
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+</project>

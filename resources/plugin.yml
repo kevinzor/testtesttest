@@ -1,0 +1,11 @@
+name: MarketCap
+version: 1.0.0
+main: com.example.marketcap.MarketCapPlugin
+api-version: 1.13
+softdepend:
+  - PlaceholderAPI
+authors:
+  - YourName
+description: |
+  Fetches the USD market cap for a pump.fun token and exposes it as a PlaceholderAPI placeholder.
+  Use %mymarketcap% in your scoreboard/tab list or chat formats to display the latest market cap.
