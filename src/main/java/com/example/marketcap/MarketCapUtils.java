@@ -26,59 +26,52 @@ public final class MarketCapUtils {
      *
      * @return the formatted market cap value (e.g. "$19.80K") or "N/A" if it couldn't be fetched or parsed.
      */
+    private static final String TOKEN_URL = 
+    "https://frontend-api.pump.fun/coins/58BMhEDSY1ySm7g87zDU63bbeP9SPpkoYSKroD19pump";
+
     public static String fetchMarketCap() {
-        HttpURLConnection connection = null;
-        try {
-            URL url = new URL(TOKEN_URL);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestProperty("User-Agent", USER_AGENT);
-            connection.setConnectTimeout(10_000);
-            connection.setReadTimeout(10_000);
+    HttpURLConnection connection = null;
+    try {
+        URL url = new URL(TOKEN_URL);
+        connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestProperty("User-Agent", USER_AGENT);
+        connection.setConnectTimeout(10_000);
+        connection.setReadTimeout(10_000);
 
-            int status = connection.getResponseCode();
-            if (status != HttpURLConnection.HTTP_OK) {
-                return "N/A";
-            }
-
-            StringBuilder sb = new StringBuilder();
-            try (InputStream in = connection.getInputStream();
-                 BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-            }
-
-            String html = sb.toString();
-            // Find the index of the usd_market_cap field in the page source.
-            int idx = html.indexOf("\"usd_market_cap\":");
-            if (idx == -1) {
-                return "N/A";
-            }
-            int start = idx + "\"usd_market_cap\":".length();
-            // Skip until we hit a digit or minus sign.
-            while (start < html.length() && !Character.isDigit(html.charAt(start)) && html.charAt(start) != '-') {
-                start++;
-            }
-            int end = start;
-            while (end < html.length() && (Character.isDigit(html.charAt(end)) || html.charAt(end) == '.')) {
-                end++;
-            }
-            if (end <= start) {
-                return "N/A";
-            }
-            String numberStr = html.substring(start, end);
-            double value = Double.parseDouble(numberStr);
-            return formatNumber(value);
-        } catch (IOException | NumberFormatException ex) {
-            // Log the exception to standard output for debugging. In production you can use plugin logger.
-            ex.printStackTrace();
+        if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
             return "N/A";
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
+        }
+
+        StringBuilder sb = new StringBuilder();
+        try (InputStream in = connection.getInputStream();
+             BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
             }
         }
+
+        String json = sb.toString();
+
+        // look for "usd_market_cap":<number>
+        int idx = json.indexOf("\"usd_market_cap\":");
+        if (idx == -1) return "N/A";
+        int start = idx + "\"usd_market_cap\":".length();
+        while (start < json.length() && !Character.isDigit(json.charAt(start))) start++;
+        int end = start;
+        while (end < json.length() && (Character.isDigit(json.charAt(end)) || json.charAt(end) == '.')) end++;
+
+        if (end <= start) return "N/A";
+
+        double value = Double.parseDouble(json.substring(start, end));
+        return formatNumber(value);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return "N/A";
+    } finally {
+        if (connection != null) connection.disconnect();
+    }
     }
 
     /**
